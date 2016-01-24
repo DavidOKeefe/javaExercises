@@ -4,11 +4,30 @@ public class Game {
   private String mHits = "";
   private String mMisses = "";
 
+  private char validateLetter(char letter) {
+    if (! Character.isLetter(letter)) {
+      throw new IllegalArgumentException("A letter is required");
+    }
+    letter = Character.toLowerCase(letter);
+    if(mMisses.indexOf(letter) >= 0 || mHits.indexOf(letter) >= 0) {
+      throw new IllegalArgumentException(letter + " has already been guessed");
+    }
+    return letter;
+  }
+
+  public boolean applyGuess(String letters) {
+    if (letters.length() == 0) {
+      throw new IllegalArgumentException("No letter found");
+    }
+    return applyGuess(letters.charAt(0));
+  }
+
   public Game(String answer) {
     mAnswer = answer;
   }
 
   public boolean applyGuess(char letter) {
+    letter = validateLetter(letter);
     boolean isHit = mAnswer.indexOf(letter) >= 0;
     if (isHit) {
       mHits += letter;
@@ -34,4 +53,11 @@ public class Game {
     return MAX_MISSES - mMisses.length();
   }
 
+  public boolean isSolved() {
+    return getCurrentProgress().indexOf('-') == -1;
+  }
+
+  public String getAnswer() {
+    return mAnswer;
+  }
 }
